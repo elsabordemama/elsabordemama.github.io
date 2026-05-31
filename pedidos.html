@@ -142,6 +142,7 @@
       display: flex; align-items: center; justify-content: center; transition: all 0.15s; flex-shrink: 0;
     }
     .btn-icon:hover { background: var(--brd); }
+    .btn-icon:disabled { opacity: 0.2; cursor: not-allowed; pointer-events: none; }
     .btn-del { color: #f87171; border-color: rgba(248,113,113,0.12); }
     .btn-del:hover { background: rgba(248,113,113,0.1); border-color: #f87171; }
 
@@ -435,7 +436,7 @@ function fmtDate(d) { return d.toLocaleDateString('es-AR', { weekday:'long', day
 function startOfDay(d = new Date()) { const c = new Date(d); c.setHours(0,0,0,0); return c.getTime(); }
 
 // ── RENDER CARD ───────────────────────────────────────────────────────────────
-function mkCard(id, p, estado) {
+function mkCard(id, p, estado, posIdx = 0, posTotal = 1) {
   const groups = {};
   (p.items||[]).forEach(i => {
     const k = i.catLabel || i.cat || 'Empanadas';
@@ -454,8 +455,8 @@ function mkCard(id, p, estado) {
   `).join('');
 
   const reorderBtns = estado === 'pendiente' ? `
-    <button class="btn-icon" onclick="move('${id}',-1)" title="Subir">↑</button>
-    <button class="btn-icon" onclick="move('${id}', 1)" title="Bajar">↓</button>
+    <button class="btn-icon" onclick="move('${id}',-1)" title="Subir" ${posIdx === 0 ? 'disabled' : ''}>↑</button>
+    <button class="btn-icon" onclick="move('${id}', 1)" title="Bajar" ${posIdx === posTotal - 1 ? 'disabled' : ''}>↓</button>
   ` : '';
   const nextBtn = NEXT_LBL[estado] ? `<button class="btn-adv" onclick="advance('${id}')">${NEXT_LBL[estado]}</button>` : '';
 
@@ -511,7 +512,7 @@ function render() {
       body.innerHTML = `<div class="empty"><div class="empty-icon">${icons[s]}</div><div class="empty-txt">${txts[s]}</div></div>`;
       return;
     }
-    cols[s].forEach(p => body.appendChild(mkCard(p.id, p, s)));
+    cols[s].forEach((p, i, arr) => body.appendChild(mkCard(p.id, p, s, i, arr.length)));
   });
 }
 
@@ -651,13 +652,22 @@ function del(id) {
 
 function move(id, dir) {
   const p = orders[id]; if (!p || p.estado !== 'pendiente') return;
-  const pend = Object.values(orders).filter(o => o.estado==='pendiente').sort((a,b)=>(a.orden||0)-(b.orden||0));
-  const idx  = pend.findIndex(o => o.id===id), si = idx+dir;
-  if (si<0||si>=pend.length) return;
-  const swap = pend[si];
+  const pend = Object.values(orders)
+    .filter(o => o.estado === 'pendiente')
+    .sort((a, b) => (a.orden || 0) - (b.orden || 0));
+  const idx = pend.findIndex(o => o.id === id);
+  const si  = idx + dir;
+  if (si < 0 || si >= pend.length) return;
+
+  // Asignar índices secuenciales limpios y swapear las dos posiciones
+  const newOrdens = pend.map((_, i) => i);
+  newOrdens[idx] = si;
+  newOrdens[si]  = idx;
+
   const batch = db.batch();
-  batch.update(db.collection('pedidos').doc(id),      { orden: swap.orden||0 });
-  batch.update(db.collection('pedidos').doc(swap.id), { orden: p.orden||0 });
+  pend.forEach((o, i) => {
+    batch.update(db.collection('pedidos').doc(o.id), { orden: newOrdens[i] });
+  });
   batch.commit();
 }
 
