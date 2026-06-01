@@ -18,13 +18,38 @@
     "precio_oferta": 0
   },
   "horarios": {
-    "lunes":     [],
-    "martes":    [],
-    "miércoles": [{"abre": "19:00", "cierra": "00:00"}],
-    "jueves":    [{"abre": "19:00", "cierra": "00:00"}],
-    "viernes":   [{"abre": "19:00", "cierra": "00:00"}],
-    "sábado":    [{"abre": "19:00", "cierra": "00:00"}],
-    "domingo":   [{"abre": "19:00", "cierra": "00:00"}]
+    "lunes": [],
+    "martes": [],
+    "miércoles": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "jueves": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "viernes": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "sábado": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "domingo": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ]
   },
   "categorias": [
     {
@@ -60,6 +85,13 @@
           "descripcion": "Tomate, mozzarella fresca y albahaca",
           "precio": 1500,
           "emoji": "🍅"
+        },
+        {
+          "id": 5,
+          "nombre": "Carne Picante",
+          "descripcion": "Estilo picante y desafiante",
+          "precio": 1500,
+          "emoji": "🥟"
         }
       ]
     },
@@ -70,28 +102,28 @@
       "descripcion": "Sabores únicos que vas a querer repetir",
       "productos": [
         {
-          "id": 5,
+          "id": 6,
           "nombre": "Calabressa",
           "descripcion": "Chorizo calabrés con cebolla caramelizada, con toque picante",
           "precio": 1500,
           "emoji": "🌶️"
         },
         {
-          "id": 6,
+          "id": 7,
           "nombre": "Cheddburger",
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 1500,
           "emoji": "🍔"
         },
         {
-          "id": 7,
+          "id": 8,
           "nombre": "Fugazzeta",
           "descripcion": "Cebolla, mozzarella generosa y aceitunas verdes",
           "precio": 1500,
           "emoji": "🧅"
         },
         {
-          "id": 8,
+          "id": 9,
           "nombre": "Roquefort & Nuez",
           "descripcion": "Queso azul cremoso con nueces tostadas, para los atrevidos",
           "precio": 1500,
