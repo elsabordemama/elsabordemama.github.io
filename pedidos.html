@@ -127,6 +127,8 @@
     .card-total { font-family: 'Syne', sans-serif; font-size: 0.95rem; color: var(--gold); }
     .card-docena { font-size: 0.65rem; color: var(--gold); opacity: 0.65; margin-top: 0.15rem; }
     .card-nota { font-size: 0.72rem; color: var(--muted); font-style: italic; margin-top: 0.4rem; padding: 0.35rem 0.5rem; background: rgba(0,0,0,0.15); border-radius: 5px; border-left: 2px solid rgba(244,189,77,0.3); }
+    .card-cliente { font-size: 0.78rem; font-weight: 600; color: var(--cream); margin-top: 0.4rem; }
+    .card-dir { font-size: 0.72rem; color: var(--muted); margin-top: 0.2rem; }
 
     .card-actions { display: flex; gap: 0.35rem; margin-top: 0.65rem; flex-wrap: wrap; }
     .btn-adv {
@@ -472,7 +474,9 @@ function mkCard(id, p, estado, posIdx = 0, posTotal = 1) {
     <hr class="card-sep">
     <div class="card-total">$${(p.total||0).toLocaleString('es-AR')}</div>
     ${docenas > 0 ? `<div class="card-docena">🎉 ${docenas} docena${docenas>1?'s':''} (${totalUnits} und.)</div>` : ''}
-    ${p.nota ? `<div class="card-nota">📝 ${p.nota}</div>` : ''}
+    ${p.nombre    ? `<div class="card-cliente">👤 ${p.nombre}</div>` : ''}
+    ${p.direccion ? `<div class="card-dir">📍 ${p.direccion}</div>` : ''}
+    ${p.nota      ? `<div class="card-nota">📝 ${p.nota}</div>` : ''}
     <div class="card-actions">
       ${nextBtn}${reorderBtns}
       <button class="btn-icon btn-del" onclick="del('${id}')" title="Eliminar">🗑</button>
@@ -537,7 +541,10 @@ function renderHistorial() {
       const items_txt = (p.items||[]).map(i => `${i.qty}× ${i.nombre}`).join(', ');
       return `<div class="hist-row">
         <div class="hist-num">#${p.numDia||'—'}</div>
-        <div class="hist-items">${items_txt}${p.nota?`<div class="hist-nota">📝 ${p.nota}</div>`:''}</div>
+        <div class="hist-items">
+          ${p.nombre    ? `<div style="font-size:.75rem;font-weight:600;margin-bottom:.2rem">👤 ${p.nombre}${p.direccion ? ` · 📍 ${p.direccion}` : ''}</div>` : (p.direccion ? `<div style="font-size:.75rem;margin-bottom:.2rem">📍 ${p.direccion}</div>` : '')}
+          ${items_txt}${p.nota?`<div class="hist-nota">📝 ${p.nota}</div>`:''}
+        </div>
         <div class="hist-right">
           <div class="hist-total">$${(p.total||0).toLocaleString('es-AR')}</div>
           <div class="hist-estado ${p.estado}">${estLbl[p.estado]||p.estado}</div>
@@ -557,7 +564,7 @@ function renderHistorial() {
 // ── EXPORT CSV ────────────────────────────────────────────────────────────────
 function exportCSV() {
   const estLbl = { pendiente:'Pendiente', preparando:'En preparación', enviado:'Enviado/Listo' };
-  const rows = [['Fecha','Hora','#Pedido','Empanadas','Total','Nota','Estado']];
+  const rows = [['Fecha','Hora','#Pedido','Nombre','Dirección','Empanadas','Total','Nota','Estado']];
   Object.values(orders).filter(p => p.timestamp)
     .sort((a,b) => a.timestamp.toMillis()-b.timestamp.toMillis())
     .forEach(p => {
@@ -566,7 +573,7 @@ function exportCSV() {
       rows.push([
         d.toLocaleDateString('es-AR'),
         d.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'}),
-        p.numDia||'', items, p.total||0, p.nota||'', estLbl[p.estado]||p.estado
+        p.numDia||'', p.nombre||'', p.direccion||'', items, p.total||0, p.nota||'', estLbl[p.estado]||p.estado
       ]);
     });
   const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');

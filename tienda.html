@@ -308,6 +308,19 @@
       font-size: 1.5rem; font-weight: 800; color: var(--gold);
     }
     .total-sub { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; }
+    .cart-input {
+      background: var(--noir); border: 1px solid var(--border);
+      color: var(--cream); font-family: 'Manrope', sans-serif;
+      font-size: 0.85rem; padding: 0.625rem 0.875rem; border-radius: 8px;
+      width: 100%; outline: none; margin-bottom: 0.65rem;
+      transition: border-color 0.2s;
+    }
+    .cart-input:focus { border-color: var(--gold); }
+    .cart-input::placeholder { color: var(--muted); }
+    .cart-input-label {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 0.3rem; display: block;
+    }
     .cart-note {
       background: var(--noir); border: 1px solid var(--border);
       color: var(--cream); font-family: 'Manrope', sans-serif;
@@ -423,6 +436,10 @@
       <span class="total-amount" id="total-amount">$0</span>
     </div>
     <p class="total-sub">* Precios orientativos. Confirmamos por WhatsApp.</p>
+    <label class="cart-input-label" for="cart-nombre">Tu nombre</label>
+    <input type="text" class="cart-input" id="cart-nombre" placeholder="¿Cómo te llamás?" autocomplete="name" />
+    <label class="cart-input-label" for="cart-direccion">Dirección de entrega</label>
+    <input type="text" class="cart-input" id="cart-direccion" placeholder="Calle y número (o 'Retiro en local')" autocomplete="street-address" />
     <textarea class="cart-note" id="cart-note" rows="2" placeholder="Nota para el pedido (opcional)…"></textarea>
     <button class="btn-wa-checkout" onclick="sendWhatsApp()">💬 Enviar pedido por WhatsApp</button>
     <button class="btn-vaciar" onclick="vaciarCarrito()">Vaciar carrito</button>
@@ -637,10 +654,16 @@ function sendWhatsApp() {
   if (cart.length === 0) return;
   const info = docenaInfo(cart);
   const total = calcTotal(cart);
-  const nota = document.getElementById('cart-note').value.trim();
+  const nota       = document.getElementById('cart-note').value.trim();
+  const nombre     = document.getElementById('cart-nombre').value.trim();
+  const direccion  = document.getElementById('cart-direccion').value.trim();
 
   // Group by category
-  let lines = [`Hola! Quiero hacer un pedido en El Sabor de Mamá.`, '', 'Quiero pedir:', ''];
+  let lines = [`Hola! Quiero hacer un pedido en El Sabor de Mamá.`, ''];
+  if (nombre)    lines.push(`👤 Nombre: ${nombre}`);
+  if (direccion) lines.push(`📍 Entrega: ${direccion}`);
+  if (nombre || direccion) lines.push('');
+  lines.push('Quiero pedir:', '');
 
   // Find category for each item
   const allProds = {};
@@ -683,6 +706,8 @@ function sendWhatsApp() {
       estado:    'pendiente',
       items,
       nota:      nota || '',
+      nombre:    nombre || '',
+      direccion: direccion || '',
       total,
       docenas:   info.docenas,
       sueltas:   info.sueltas,
