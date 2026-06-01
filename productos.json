@@ -9,13 +9,13 @@
   },
   "precios": {
     "empanada_unit": 1500,
-    "docena": 16000,
+    "docena": 14000,
     "docena_cantidad": 12
   },
   "oferta": {
-    "activa": false,
-    "texto": "",
-    "precio_oferta": 0
+    "activa": true,
+    "texto": "Oferta Docena Dïa de la Madre",
+    "precio_oferta": 14000
   },
   "horarios": {
     "lunes": [],
@@ -85,13 +85,6 @@
           "descripcion": "Tomate, mozzarella fresca y albahaca",
           "precio": 1500,
           "emoji": "🍅"
-        },
-        {
-          "id": 5,
-          "nombre": "Carne Picante",
-          "descripcion": "Estilo picante y desafiante",
-          "precio": 1500,
-          "emoji": "🥟"
         }
       ]
     },
@@ -102,28 +95,28 @@
       "descripcion": "Sabores únicos que vas a querer repetir",
       "productos": [
         {
-          "id": 6,
+          "id": 5,
           "nombre": "Calabressa",
           "descripcion": "Chorizo calabrés con cebolla caramelizada, con toque picante",
           "precio": 1500,
           "emoji": "🌶️"
         },
         {
-          "id": 7,
+          "id": 6,
           "nombre": "Cheddburger",
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 1500,
           "emoji": "🍔"
         },
         {
-          "id": 8,
+          "id": 7,
           "nombre": "Fugazzeta",
           "descripcion": "Cebolla, mozzarella generosa y aceitunas verdes",
           "precio": 1500,
           "emoji": "🧅"
         },
         {
-          "id": 9,
+          "id": 8,
           "nombre": "Roquefort & Nuez",
           "descripcion": "Queso azul cremoso con nueces tostadas, para los atrevidos",
           "precio": 1500,
