@@ -328,6 +328,19 @@
       font-family: 'Syne', sans-serif;
       font-size: 1.25rem; font-weight: 800; color: var(--gold);
     }
+    .pcard-price-orig {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      color: var(--muted); text-decoration: line-through; margin-right: 0.3rem;
+    }
+    #oferta-banner {
+      display: none; max-width: 1100px; margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, rgba(244,189,77,0.12), rgba(244,189,77,0.06));
+      border: 1px solid rgba(244,189,77,0.35); border-radius: 10px;
+      padding: 0.85rem 1.25rem; font-size: 0.9rem; font-weight: 600;
+      color: var(--gold); text-align: center; letter-spacing: 0.02em;
+    }
+    #oferta-banner.visible { display: block; }
     .tienda-cta {
       max-width: 1100px; margin: 3rem auto 0;
       padding: 2.5rem; border-radius: 12px;
@@ -628,6 +641,7 @@
     </div>
     <div class="cat-tabs" id="cat-tabs"></div>
   </div>
+  <div id="oferta-banner"></div>
   <div id="cat-grid">
     <div style="text-align:center; color: var(--muted); padding: 3rem;">Cargando menú…</div>
   </div>
@@ -741,7 +755,7 @@ const _FALLBACK = {
     "analytics_id": ""
   },
   "precios": { "empanada_unit": 1500, "docena": 16000, "docena_cantidad": 12 },
-  "oferta": { "activa": false, "texto": "", "precio_oferta": 0 },
+  "oferta": { "activa": false, "texto": "", "precio_unit_oferta": 0, "precio_docena_oferta": 0 },
   "horarios": {
     "lunes":     [],
     "martes":    [],
@@ -838,6 +852,33 @@ function buildProducts(data) {
   const tabs = document.getElementById('cat-tabs');
   const grid = document.getElementById('cat-grid');
 
+  const oferta = data.oferta || {};
+  const ofertaActiva      = !!oferta.activa;
+  const ofertaUnit        = ofertaActiva && oferta.precio_unit_oferta   > 0 ? oferta.precio_unit_oferta   : 0;
+  const ofertaDocena      = ofertaActiva && oferta.precio_docena_oferta > 0 ? oferta.precio_docena_oferta : 0;
+  const precioUnitOrig    = data.precios?.empanada_unit || 1500;
+  const precioDocenaOrig  = data.precios?.docena        || 16000;
+  const docenaCant        = data.precios?.docena_cantidad || 12;
+
+  // Banner de oferta
+  const ofBanner = document.getElementById('oferta-banner');
+  if (ofertaActiva && oferta.texto) {
+    ofBanner.textContent = oferta.texto;
+    ofBanner.classList.add('visible');
+  } else {
+    ofBanner.classList.remove('visible');
+  }
+
+  // CTA docena — actualizar si hay oferta de docena
+  const ctaP = document.querySelector('.tienda-cta-text p');
+  if (ctaP) {
+    if (ofertaDocena) {
+      ctaP.innerHTML = `Armá tu pedido y elegí tus sabores. 12 empanadas = <strong style="color:var(--gold)">$${ofertaDocena.toLocaleString('es-AR')}</strong> <span style="text-decoration:line-through;opacity:.5;font-size:.9em">$${precioDocenaOrig.toLocaleString('es-AR')}</span> 🎉`;
+    } else {
+      ctaP.textContent = `Armá tu pedido, elegí tus sabores y mandalo directo por WhatsApp. 12 empanadas = $${precioDocenaOrig.toLocaleString('es-AR')} 🎉`;
+    }
+  }
+
   tabs.innerHTML = `<button class="cat-tab active" data-cat="todos">Todos</button>` +
     data.categorias.map(c => `<button class="cat-tab" data-cat="${c.id}">${c.emoji} ${c.nombre}</button>`).join('');
 
@@ -845,16 +886,21 @@ function buildProducts(data) {
     <div class="cat-section" data-cat-id="${cat.id}">
       <div class="cat-section-title">${cat.emoji} ${cat.nombre}</div>
       <div class="productos-grid">
-        ${cat.productos.map(p => `
+        ${cat.productos.map(p => {
+          const precioMostrar = ofertaUnit || p.precio;
+          const precioHtml = ofertaUnit
+            ? `<span class="pcard-price-orig">$${p.precio.toLocaleString('es-AR')}</span><span class="pcard-price">$${precioMostrar.toLocaleString('es-AR')}</span>`
+            : `<span class="pcard-price">$${p.precio.toLocaleString('es-AR')}</span>`;
+          return `
           <div class="pcard">
             <div class="pcard-emoji">${p.emoji || '🥟'}</div>
             <div class="pcard-body">
               <h3>${p.nombre}</h3>
               <p>${p.descripcion}</p>
-              <div class="pcard-price">$${p.precio.toLocaleString('es-AR')}</div>
+              <div style="display:flex;align-items:baseline;gap:0.2rem">${precioHtml}</div>
             </div>
-          </div>
-        `).join('')}
+          </div>`;
+        }).join('')}
       </div>
     </div>
   `).join('');
