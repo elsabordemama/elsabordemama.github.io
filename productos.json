@@ -15,17 +15,42 @@
   "oferta": {
     "activa": true,
     "texto": "Oferta Docena Dïa de la Madre",
-    "precio_unit_oferta": 0,
-    "precio_docena_oferta": 14000
+    "precio_unit_oferta": 1000,
+    "precio_docena_oferta": 10000
   },
   "horarios": {
-    "lunes":     [],
-    "martes":    [],
-    "miércoles": [{"abre": "19:00", "cierra": "00:00"}],
-    "jueves":    [{"abre": "19:00", "cierra": "00:00"}],
-    "viernes":   [{"abre": "19:00", "cierra": "00:00"}],
-    "sábado":    [{"abre": "19:00", "cierra": "00:00"}],
-    "domingo":   [{"abre": "19:00", "cierra": "00:00"}]
+    "lunes": [],
+    "martes": [],
+    "miércoles": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "jueves": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "viernes": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "sábado": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
+    "domingo": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ]
   },
   "categorias": [
     {
