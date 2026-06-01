@@ -289,10 +289,15 @@
           <label class="lbl">Texto del banner</label>
           <input type="text" id="f-ot" class="inp" placeholder="🎉 Oferta especial de fin de semana">
         </div>
+        <div class="mb4">
+          <label class="lbl">Precio por unidad en oferta ($)</label>
+          <input type="number" id="f-opu" class="inp" placeholder="0 = sin descuento en unidades" min="0">
+          <p style="font-size:.7rem;color:var(--muted);margin-top:.35rem">Si ponés un valor, cada empanada muestra el precio original tachado y este en dorado. Dejalo en 0 para no tocar el precio unitario.</p>
+        </div>
         <div>
-          <label class="lbl">Precio de oferta ($)</label>
-          <input type="number" id="f-opr" class="inp" placeholder="0" min="0">
-          <p style="font-size:.7rem;color:var(--muted);margin-top:.35rem">Precio especial que se muestra en el banner. Dejalo en 0 si solo querés mostrar texto.</p>
+          <label class="lbl">Precio de docena en oferta ($)</label>
+          <input type="number" id="f-opd" class="inp" placeholder="0 = sin descuento en docena" min="0">
+          <p style="font-size:.7rem;color:var(--muted);margin-top:.35rem">Si ponés un valor, el precio de docena muestra el original tachado y este en dorado. Dejalo en 0 para no tocar la docena.</p>
         </div>
       </div>
     </div>
@@ -542,14 +547,16 @@ function collectPrecios() {
 function buildOfForm(data) {
   const o = data.oferta || {};
   $('f-oa').checked = !!o.activa;
-  $('f-ot').value   = o.texto         || '';
-  $('f-opr').value  = o.precio_oferta || '';
+  $('f-ot').value   = o.texto               || '';
+  $('f-opu').value  = o.precio_unit_oferta  || '';
+  $('f-opd').value  = o.precio_docena_oferta|| '';
 }
 function collectOf() {
-  return { ...raw.oferta,
-    activa:        $('f-oa').checked,
-    texto:         $('f-ot').value.trim(),
-    precio_oferta: parseInt($('f-opr').value)||0,
+  return {
+    activa:               $('f-oa').checked,
+    texto:                $('f-ot').value.trim(),
+    precio_unit_oferta:   parseInt($('f-opu').value) || 0,
+    precio_docena_oferta: parseInt($('f-opd').value) || 0,
   };
 }
 

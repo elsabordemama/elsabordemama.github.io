@@ -182,6 +182,19 @@
       font-family: 'Syne', sans-serif;
       font-size: 1.1rem; font-weight: 800; color: var(--gold);
     }
+    .pcard-price-orig {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.82rem; font-weight: 600;
+      color: var(--muted); text-decoration: line-through; margin-right: 0.35rem;
+    }
+    #oferta-banner {
+      display: none; margin: 0.75rem 1rem 0;
+      background: linear-gradient(135deg, rgba(244,189,77,0.12), rgba(244,189,77,0.06));
+      border: 1px solid rgba(244,189,77,0.35); border-radius: 10px;
+      padding: 0.75rem 1rem; font-size: 0.85rem; font-weight: 600;
+      color: var(--gold); text-align: center; letter-spacing: 0.02em;
+    }
+    #oferta-banner.visible { display: block; }
     .btn-add {
       background: var(--gold); color: var(--noir);
       font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.85rem;
@@ -383,8 +396,9 @@
 
 <div id="docena-promo-banner">
   <span class="dpe">🎉</span>
-  <span>Llevando <strong>12 empanadas</strong> se aplica el <strong>precio de docena: $16.000</strong> — en vez de $18.000 por unidad. El descuento se calcula automáticamente en el carrito.</span>
+  <span id="docena-promo-txt">Llevando <strong>12 empanadas</strong> se aplica el <strong>precio de docena: $16.000</strong> — en vez de $18.000 por unidad. El descuento se calcula automáticamente en el carrito.</span>
 </div>
+<div id="oferta-banner"></div>
 
 <div id="catalogo">
   <!-- Skeleton -->
@@ -423,7 +437,7 @@
 const _FALLBACK = {
   "negocio": { "nombre": "El Sabor de Mamá", "whatsapp": "5492244475575", "direccion": "Av. Domingo Faustino Sarmiento 545, Las Flores" },
   "precios": { "empanada_unit": 1500, "docena": 16000, "docena_cantidad": 12 },
-  "oferta": { "activa": false },
+  "oferta": { "activa": false, "texto": "", "precio_unit_oferta": 0, "precio_docena_oferta": 0 },
   "horarios": {
     "lunes":     [],
     "martes":    [],
@@ -722,9 +736,36 @@ let _fallbackData = _FALLBACK;
 function buildCatalog(data) {
   _fallbackData = data;
   negocioData = data.negocio || {};
-  PRECIO_UNIT = data.precios?.empanada_unit || 1500;
-  PRECIO_DOCENA = data.precios?.docena || 16000;
+
+  const precioUnitOrig   = data.precios?.empanada_unit   || 1500;
+  const precioDocenaOrig = data.precios?.docena          || 16000;
   DOCENA_CANT = data.precios?.docena_cantidad || 12;
+
+  const oferta = data.oferta || {};
+  const ofertaActiva    = !!oferta.activa;
+  const ofertaUnitPrecio   = ofertaActiva && oferta.precio_unit_oferta   > 0 ? oferta.precio_unit_oferta   : 0;
+  const ofertaDocenaPrecio = ofertaActiva && oferta.precio_docena_oferta > 0 ? oferta.precio_docena_oferta : 0;
+
+  PRECIO_UNIT   = ofertaUnitPrecio   || precioUnitOrig;
+  PRECIO_DOCENA = ofertaDocenaPrecio || precioDocenaOrig;
+
+  // Banner de oferta
+  const ofBanner = document.getElementById('oferta-banner');
+  if (ofertaActiva && oferta.texto) {
+    ofBanner.textContent = oferta.texto;
+    ofBanner.classList.add('visible');
+  } else {
+    ofBanner.classList.remove('visible');
+  }
+
+  // Banner docena promo — actualizar si hay oferta de docena
+  const docTxt = document.getElementById('docena-promo-txt');
+  const precioUnitNormal = precioUnitOrig * DOCENA_CANT;
+  if (ofertaDocenaPrecio) {
+    docTxt.innerHTML = `Llevando <strong>${DOCENA_CANT} empanadas</strong> se aplica el <strong>precio de docena: $${PRECIO_DOCENA.toLocaleString('es-AR')}</strong> — <span style="text-decoration:line-through;opacity:.55">$${precioDocenaOrig.toLocaleString('es-AR')}</span>. El descuento se calcula automáticamente en el carrito.`;
+  } else {
+    docTxt.innerHTML = `Llevando <strong>${DOCENA_CANT} empanadas</strong> se aplica el <strong>precio de docena: $${PRECIO_DOCENA.toLocaleString('es-AR')}</strong> — en vez de $${precioUnitNormal.toLocaleString('es-AR')} por unidad. El descuento se calcula automáticamente en el carrito.`;
+  }
 
   // Pills
   const pills = document.getElementById('pills-strip');
@@ -749,20 +790,25 @@ function buildCatalog(data) {
     <div class="cat-section" data-cat="${c.id}">
       <div class="cat-title">${c.emoji} ${c.nombre}</div>
       <div class="pcard-grid">
-        ${c.productos.map(p => `
+        ${c.productos.map(p => {
+          const precioMostrar = ofertaUnitPrecio || p.precio;
+          const precioHtml = ofertaUnitPrecio
+            ? `<span class="pcard-price-orig">$${p.precio.toLocaleString('es-AR')}</span><span class="pcard-price">$${precioMostrar.toLocaleString('es-AR')}</span>`
+            : `<span class="pcard-price">$${p.precio.toLocaleString('es-AR')}</span>`;
+          const cartItem = { ...p, precio: precioMostrar };
+          return `
           <div class="pcard" data-nombre="${p.nombre.toLowerCase()}">
             <div class="pcard-emoji-wrap">${p.emoji || '🥟'}</div>
             <div class="pcard-body">
               <h3>${p.nombre}</h3>
               <p>${p.descripcion}</p>
               <div class="pcard-footer">
-                <span class="pcard-price">$${p.precio.toLocaleString('es-AR')}</span>
+                <div style="display:flex;align-items:baseline;gap:0.1rem">${precioHtml}</div>
                 <button class="btn-add" data-pid="${p.id}"
-                  onclick='addToCart(${JSON.stringify(p)})'>+ Agregar</button>
+                  onclick='addToCart(${JSON.stringify(cartItem)})'>+ Agregar</button>
               </div>
             </div>
-          </div>
-        `).join('')}
+          </div>`}).join('')}
       </div>
     </div>
   `).join('');
