@@ -316,6 +316,7 @@
       transition: border-color 0.2s;
     }
     .cart-input:focus { border-color: var(--gold); }
+    .cart-input.error { border-color: #f87171; }
     .cart-input::placeholder { color: var(--muted); }
     .cart-input-label {
       font-size: 0.72rem; font-weight: 600; letter-spacing: 0.06em;
@@ -436,11 +437,11 @@
       <span class="total-amount" id="total-amount">$0</span>
     </div>
     <p class="total-sub">* Precios orientativos. Confirmamos por WhatsApp.</p>
-    <label class="cart-input-label" for="cart-nombre">Tu nombre</label>
+    <label class="cart-input-label" for="cart-nombre">Tu nombre <span style="color:#f87171">*</span></label>
     <input type="text" class="cart-input" id="cart-nombre" placeholder="¿Cómo te llamás?" autocomplete="name" />
-    <label class="cart-input-label" for="cart-direccion">Dirección de entrega</label>
+    <label class="cart-input-label" for="cart-direccion">Dirección de entrega <span style="color:#f87171">*</span></label>
     <input type="text" class="cart-input" id="cart-direccion" placeholder="Calle y número (o 'Retiro en local')" autocomplete="street-address" />
-    <textarea class="cart-note" id="cart-note" rows="2" placeholder="Nota para el pedido (opcional)…"></textarea>
+    <textarea class="cart-note" id="cart-note" rows="2" placeholder="Aclaración especial (opcional) — horario de entrega, piso, etc. Sin aclaración los pedidos se envían en orden de llegada."></textarea>
     <button class="btn-wa-checkout" onclick="sendWhatsApp()">💬 Enviar pedido por WhatsApp</button>
     <button class="btn-vaciar" onclick="vaciarCarrito()">Vaciar carrito</button>
   </div>
@@ -652,11 +653,23 @@ function closeCart() {
 
 function sendWhatsApp() {
   if (cart.length === 0) return;
+
+  const nombreEl   = document.getElementById('cart-nombre');
+  const direccionEl = document.getElementById('cart-direccion');
+  const nombre     = nombreEl.value.trim();
+  const direccion  = direccionEl.value.trim();
+
+  nombreEl.classList.toggle('error', !nombre);
+  direccionEl.classList.toggle('error', !direccion);
+  if (!nombre || !direccion) {
+    if (!nombre) nombreEl.focus();
+    else direccionEl.focus();
+    return;
+  }
+
   const info = docenaInfo(cart);
   const total = calcTotal(cart);
   const nota       = document.getElementById('cart-note').value.trim();
-  const nombre     = document.getElementById('cart-nombre').value.trim();
-  const direccion  = document.getElementById('cart-direccion').value.trim();
 
   // Group by category
   let lines = [`Hola! Quiero hacer un pedido en El Sabor de Mamá.`, ''];
@@ -845,6 +858,9 @@ function buildCatalog(data) {
 // ── Search ────────────────────────────────────────────────────────
 const searchInput = document.getElementById('search-input');
 const btnClear = document.getElementById('btn-clear-search');
+
+document.getElementById('cart-nombre').addEventListener('input', e => e.target.classList.remove('error'));
+document.getElementById('cart-direccion').addEventListener('input', e => e.target.classList.remove('error'));
 
 searchInput.addEventListener('input', () => {
   const q = searchInput.value.toLowerCase();
