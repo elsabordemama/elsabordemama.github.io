@@ -8,8 +8,8 @@
     "analytics_id": ""
   },
   "precios": {
-    "empanada_unit": 1500,
-    "docena": 16000,
+    "empanada_unit": 2000,
+    "docena": 18000,
     "docena_cantidad": 12
   },
   "oferta": {
@@ -70,29 +70,22 @@
           "id": 2,
           "nombre": "Jamón y Queso",
           "descripcion": "La clásica combinación irresistible con queso derretido",
-          "precio": 1500,
+          "precio": 2000,
           "emoji": "🧀"
         },
         {
           "id": 3,
           "nombre": "Humita",
           "descripcion": "Choclo cremoso y aromático, sabor campo",
-          "precio": 1500,
+          "precio": 2000,
           "emoji": "🌽"
         },
         {
           "id": 4,
           "nombre": "Capresse",
           "descripcion": "Tomate, mozzarella fresca y albahaca",
-          "precio": 1500,
-          "emoji": "🍅"
-        },
-        {
-          "id": 5,
-          "nombre": "Carrne Picante",
-          "descripcion": "Para Valientes",
           "precio": 2000,
-          "emoji": "🥟"
+          "emoji": "🍅"
         }
       ]
     },
@@ -103,31 +96,31 @@
       "descripcion": "Sabores únicos que vas a querer repetir",
       "productos": [
         {
-          "id": 6,
+          "id": 5,
           "nombre": "Calabressa",
           "descripcion": "Chorizo calabrés con cebolla caramelizada, con toque picante",
-          "precio": 1500,
+          "precio": 2000,
           "emoji": "🌶️"
         },
         {
-          "id": 7,
+          "id": 6,
           "nombre": "Cheddburger",
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
-          "precio": 1500,
+          "precio": 2000,
           "emoji": "🍔"
         },
         {
-          "id": 8,
+          "id": 7,
           "nombre": "Fugazzeta",
           "descripcion": "Cebolla, mozzarella generosa y aceitunas verdes",
-          "precio": 1500,
+          "precio": 2000,
           "emoji": "🧅"
         },
         {
-          "id": 9,
+          "id": 8,
           "nombre": "Roquefort & Nuez",
           "descripcion": "Queso azul cremoso con nueces tostadas, para los atrevidos",
-          "precio": 1500,
+          "precio": 2000,
           "emoji": "🫙"
         }
       ]
