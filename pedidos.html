@@ -234,6 +234,11 @@
     .cart-total-val { font-family: 'Syne', sans-serif; font-size: 1.05rem; color: var(--gold); }
     #modal-docena-hint { font-size: 0.72rem; text-align: center; padding: 0.35rem; border-radius: 5px; }
 
+    .modal-input { width: 100%; padding: 0.5rem 0.75rem; background: var(--card2); border: 1px solid var(--brd2); border-radius: 7px; color: var(--cream); font-size: 0.82rem; outline: none; font-family: 'Manrope', sans-serif; transition: border-color 0.15s; }
+    .modal-input::placeholder { color: var(--muted); }
+    .modal-input:focus { border-color: rgba(244,189,77,0.35); }
+    .modal-input.error { border-color: #f87171; }
+    .modal-lbl { font-size: 0.68rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin-bottom: 0.25rem; display: block; }
     #modal-nota { width: 100%; padding: 0.5rem 0.75rem; background: var(--card2); border: 1px solid var(--brd2); border-radius: 7px; color: var(--cream); font-size: 0.8rem; font-style: italic; outline: none; resize: none; font-family: 'Manrope', sans-serif; }
     #modal-nota::placeholder { color: var(--muted); }
     #modal-nota:focus { border-color: rgba(244,189,77,0.35); }
@@ -350,7 +355,11 @@
         <span class="cart-total-val" id="modal-total">$0</span>
       </div>
     </div>
-    <textarea id="modal-nota" rows="2" placeholder="Nota (opcional)…"></textarea>
+    <label class="modal-lbl" for="modal-nombre">Nombre <span style="color:#f87171">*</span></label>
+    <input type="text" class="modal-input" id="modal-nombre" placeholder="Nombre del cliente" autocomplete="off" style="margin-bottom:.6rem">
+    <label class="modal-lbl" for="modal-direccion">Dirección de entrega <span style="color:#f87171">*</span></label>
+    <input type="text" class="modal-input" id="modal-direccion" placeholder="Calle y número (o 'Retiro en local')" autocomplete="off" style="margin-bottom:.6rem">
+    <textarea id="modal-nota" rows="2" placeholder="Aclaración especial (opcional) — horario, piso, etc."></textarea>
     <button id="btn-submit-order" disabled onclick="submitManualOrder()">Agregar a pendiente</button>
   </div>
 </div>
@@ -791,13 +800,26 @@ function qtyChange(idx, d) {
 
 async function submitManualOrder() {
   if (!manualCart.length) return;
+
+  const nombreEl    = document.getElementById('modal-nombre');
+  const direccionEl = document.getElementById('modal-direccion');
+  const nombre      = nombreEl.value.trim();
+  const direccion   = direccionEl.value.trim();
+
+  nombreEl.classList.toggle('error', !nombre);
+  direccionEl.classList.toggle('error', !direccion);
+  if (!nombre || !direccion) {
+    if (!nombre) nombreEl.focus(); else direccionEl.focus();
+    return;
+  }
+
   const nota  = document.getElementById('modal-nota').value.trim();
   const total = calcTotal(manualCart);
   document.getElementById('btn-submit-order').disabled = true;
   try {
     await db.collection('pedidos').add({
       timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-      orden: Date.now(), estado: 'pendiente', total, nota, manual: true,
+      orden: Date.now(), estado: 'pendiente', total, nota, nombre, direccion, manual: true,
       items: manualCart.map(i => ({ nombre:i.nombre, catLabel:i.catLabel, cat:i.catId, qty:i.qty, precio:PRECIO_UNIT }))
     });
     toast('✅ Pedido agregado a la cola');
@@ -810,8 +832,12 @@ async function submitManualOrder() {
 
 function openModal() {
   manualCart = [];
-  document.getElementById('modal-nota').value = '';
-  document.getElementById('modal-search').value = '';
+  document.getElementById('modal-nota').value      = '';
+  document.getElementById('modal-nombre').value    = '';
+  document.getElementById('modal-direccion').value = '';
+  document.getElementById('modal-nombre').classList.remove('error');
+  document.getElementById('modal-direccion').classList.remove('error');
+  document.getElementById('modal-search').value    = '';
   filterProds('');
   renderManualCart();
   document.getElementById('modal-bg').classList.add('open');
