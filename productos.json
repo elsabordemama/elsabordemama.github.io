@@ -13,7 +13,7 @@
     "docena_cantidad": 12
   },
   "oferta": {
-    "activa": true,
+    "activa": false,
     "texto": "Oferta Docena Dïa de la Madre",
     "precio_unit_oferta": 1000,
     "precio_docena_oferta": 10000
