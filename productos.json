@@ -8,8 +8,8 @@
     "analytics_id": ""
   },
   "precios": {
-    "empanada_unit": 1500,
-    "docena": 16000,
+    "empanada_unit": 2000,
+    "docena": 18000,
     "docena_cantidad": 12
   },
   "oferta": {
