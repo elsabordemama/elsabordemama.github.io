@@ -122,10 +122,24 @@
     .cat-hdr { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.25rem; background: var(--slate); border-bottom: 1px solid var(--brd2); }
     .cat-hdr-name { flex: 1; font-weight: 600; color: var(--cream); font-size: 0.9rem; background: transparent; border: none; outline: none; min-width: 0; font-family: 'Manrope', sans-serif; }
     .cat-hdr-name:focus { background: var(--card2); border-radius: 4px; padding: 0.15rem 0.4rem; }
-    .prod-grid { display: grid; grid-template-columns: 2.5rem 1fr 2fr 7rem 1.8rem; gap: 0.5rem; }
+    .prod-grid { display: grid; grid-template-columns: 3.5rem 1fr 2fr 7rem 1.8rem; gap: 0.5rem; }
     .prod-row { padding: 0.5rem 1.25rem; border-bottom: 1px solid var(--brd2); }
     .prod-row:last-child { border-bottom: none; }
-    @media (max-width: 600px) { .prod-grid { grid-template-columns: 2rem 1fr 6rem 1.5rem; } .prod-col-desc { display: none; } }
+    @media (max-width: 600px) { .prod-grid { grid-template-columns: 3rem 1fr 6rem 1.5rem; } .prod-col-desc { display: none; } }
+    .prod-media { display: flex; flex-direction: column; align-items: center; gap: 2px; position: relative; }
+    .prod-thumb { width: 3rem; height: 3rem; object-fit: cover; border-radius: 6px; display: block; }
+    .prod-thumb-rm { position: absolute; top: -5px; right: -5px; background: #f87171; color: #fff; border: none; border-radius: 50%; width: 17px; height: 17px; font-size: 10px; cursor: pointer; line-height: 1; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .prod-cam-btn { font-size: 0.6rem; color: var(--muted); cursor: pointer; line-height: 1.3; text-align: center; }
+    .prod-cam-btn:hover { color: var(--gold); }
+
+    /* Stock tab */
+    .stock-cat-hdr { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); margin: 1rem 0 .5rem; padding-bottom: .3rem; border-bottom: 1px solid var(--brd2); }
+    .stock-cat-hdr:first-child { margin-top: 0; }
+    .stock-item { display: flex; align-items: center; gap: .75rem; padding: .5rem .75rem; background: var(--card2); border-radius: 8px; margin-bottom: .3rem; cursor: pointer; transition: background .12s; }
+    .stock-item:hover { background: var(--brd); }
+    .stock-item input[type=checkbox] { accent-color: var(--gold); width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+    .stock-item-name { font-size: .88rem; flex: 1; }
+    .stock-badge-off { font-size: .65rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: #f87171; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.2); padding: .15rem .45rem; border-radius: 4px; }
 
     /* Mobile save bar */
     .save-bar-mob { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: var(--slate); border-top: 1px solid var(--brd); padding: 0.875rem; z-index: 50; }
@@ -209,6 +223,7 @@
     <button class="tab-btn" onclick="showTab('oferta',this)">Oferta</button>
     <button class="tab-btn" onclick="showTab('horarios',this)">Horarios</button>
     <button class="tab-btn" onclick="showTab('catalogo',this)">Catálogo</button>
+    <button class="tab-btn" onclick="showTab('stock',this)">Stock</button>
   </nav>
 
   <div class="ed-body">
@@ -321,6 +336,15 @@
       >+ Nueva categoría</button>
     </div>
 
+    <!-- STOCK -->
+    <div id="tab-stock" class="tab-panel">
+      <div class="card">
+        <div class="card-title">Stock de productos</div>
+        <p style="font-size:.78rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.5">Los productos sin tilde aparecen en la tienda como "Sin stock" y no se pueden agregar al carrito, pero siguen siendo visibles.</p>
+        <div id="stock-list"></div>
+      </div>
+    </div>
+
   </div><!-- end ed-body -->
 
   <div class="save-bar-mob">
@@ -415,6 +439,7 @@ function showTab(name, btn) {
   $('tab-' + name).classList.add('active');
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
+  if (name === 'stock') renderStock();
 }
 
 // ── COLA ──────────────────────────────────────────────────────────────────────
@@ -597,6 +622,61 @@ function delTurno(day, ti)  { horData[day].splice(ti,1); renderHor(); }
 function updTurno(d,ti,f,v) { horData[d][ti][f] = v; }
 
 // ── CATÁLOGO ──────────────────────────────────────────────────────────────────
+// ── IMAGEN DE PRODUCTO ────────────────────────────────────────────────────────
+async function ghUploadImage(filename, base64) {
+  let sha;
+  try { const f = await ghGet('img/' + filename); sha = f.sha; } catch(_) {}
+  const r = await fetch(`https://api.github.com/repos/${GH.owner}/${GH.repo}/contents/img/${filename}`, {
+    method: 'PUT',
+    headers: { Authorization:`Bearer ${pat}`, 'Content-Type':'application/json', Accept:'application/vnd.github+json' },
+    body: JSON.stringify({ message:`portal: foto ${filename}`, content: base64, sha, branch: GH.branch })
+  });
+  if (!r.ok) { const e = await r.json(); throw new Error(e.message || r.status); }
+  return r.json();
+}
+
+function uploadProductImg(event, ci, pi) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const base64 = e.target.result.split(',')[1];
+    const ext = file.name.split('.').pop().toLowerCase().replace('jpeg','jpg');
+    const prod = catData[ci].productos[pi];
+    const filename = `prod-${prod.id || Date.now()}.${ext}`;
+    setStatus('Subiendo imagen…');
+    try {
+      await ghUploadImage(filename, base64);
+      catData[ci].productos[pi].imagen = filename;
+      renderCat();
+      setStatus('Imagen subida ✓', 'var(--green)');
+    } catch(err) {
+      setStatus('Error al subir: ' + err.message, '#f87171');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImg(ci, pi) {
+  catData[ci].productos[pi].imagen = null;
+  renderCat();
+}
+
+// ── STOCK ─────────────────────────────────────────────────────────────────────
+function renderStock() {
+  $('stock-list').innerHTML = catData.map((cat, ci) => `
+    <div class="stock-cat-hdr">${esc(cat.emoji||'')} ${esc(cat.nombre||'')}</div>
+    ${cat.productos.map((p, pi) => `
+      <label class="stock-item">
+        <input type="checkbox" ${p.disponible !== false ? 'checked' : ''}
+          onchange="catData[${ci}].productos[${pi}].disponible=this.checked;renderStock()">
+        <span class="stock-item-name">${esc(p.emoji||'🥟')} ${esc(p.nombre||'Sin nombre')}</span>
+        ${p.disponible === false ? '<span class="stock-badge-off">Sin stock</span>' : ''}
+      </label>`).join('')}
+  `).join('');
+}
+
+// ── CATÁLOGO ──────────────────────────────────────────────────────────────────
 function buildCatForm(data) {
   catData = JSON.parse(JSON.stringify(data.categorias || []));
   renderCat();
@@ -612,11 +692,20 @@ function renderCat() {
       </div>
       <div>
         <div class="prod-grid prod-row" style="font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);border-bottom:1px solid var(--brd2)">
-          <span>Emoji</span><span>Nombre</span><span class="prod-col-desc">Descripción</span><span>Precio $</span><span></span>
+          <span>Foto</span><span>Nombre</span><span class="prod-col-desc">Descripción</span><span>Precio $</span><span></span>
         </div>
         ${cat.productos.map((p,pi) => `
           <div class="prod-row prod-grid">
-            <input value="${esc(p.emoji||'')}" maxlength="2" class="inp" style="text-align:center;font-size:1rem;padding:.35rem .2rem" onchange="catData[${ci}].productos[${pi}].emoji=this.value">
+            <div class="prod-media">
+              ${p.imagen
+                ? `<img src="./img/${esc(p.imagen)}" class="prod-thumb" alt="">
+                   <button class="prod-thumb-rm" onclick="clearImg(${ci},${pi})" title="Quitar foto">×</button>`
+                : `<input value="${esc(p.emoji||'')}" maxlength="2" class="inp" style="text-align:center;font-size:.9rem;padding:.2rem .1rem;width:2.8rem" onchange="catData[${ci}].productos[${pi}].emoji=this.value">
+                   <label class="prod-cam-btn" title="Subir foto">📷
+                     <input type="file" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="uploadProductImg(event,${ci},${pi})">
+                   </label>`
+              }
+            </div>
             <input value="${esc(p.nombre||'')}" placeholder="Nombre" class="inp" style="font-size:.82rem" onchange="catData[${ci}].productos[${pi}].nombre=this.value">
             <input value="${esc(p.descripcion||'')}" placeholder="Descripción" class="inp prod-col-desc" style="font-size:.82rem" onchange="catData[${ci}].productos[${pi}].descripcion=this.value">
             <input type="number" value="${p.precio||0}" min="0" class="inp" style="font-size:.82rem" onchange="catData[${ci}].productos[${pi}].precio=parseInt(this.value)||0">

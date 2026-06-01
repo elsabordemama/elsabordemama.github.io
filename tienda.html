@@ -203,6 +203,10 @@
     }
     .btn-add:hover { background: var(--gold-dark); transform: scale(1.04); }
     .pcard.hidden { display: none; }
+    .pcard-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+    .pcard.sin-stock { opacity: 0.55; }
+    .pcard.sin-stock .btn-add { background: var(--border); color: var(--muted); cursor: not-allowed; pointer-events: none; }
+    .sin-stock-badge { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #f87171; background: rgba(248,113,113,0.12); border: 1px solid rgba(248,113,113,0.2); padding: 0.18rem 0.45rem; border-radius: 4px; }
 
     /* Skeleton */
     .skeleton { animation: pulse 1.5s ease-in-out infinite; }
@@ -829,20 +833,26 @@ function buildCatalog(data) {
       <div class="cat-title">${c.emoji} ${c.nombre}</div>
       <div class="pcard-grid">
         ${c.productos.map(p => {
+          const enStock     = p.disponible !== false;
           const precioMostrar = ofertaUnitPrecio || p.precio;
           const precioHtml = ofertaUnitPrecio
             ? `<span class="pcard-price-orig">$${p.precio.toLocaleString('es-AR')}</span><span class="pcard-price">$${precioMostrar.toLocaleString('es-AR')}</span>`
             : `<span class="pcard-price">$${p.precio.toLocaleString('es-AR')}</span>`;
           const cartItem = { ...p, precio: precioMostrar };
           return `
-          <div class="pcard" data-nombre="${p.nombre.toLowerCase()}">
-            <div class="pcard-emoji-wrap">${p.emoji || '🥟'}</div>
+          <div class="pcard${enStock ? '' : ' sin-stock'}" data-nombre="${p.nombre.toLowerCase()}">
+            ${p.imagen
+              ? `<img class="pcard-img" src="./img/${p.imagen}" alt="${p.nombre}" loading="lazy">`
+              : `<div class="pcard-emoji-wrap">${p.emoji || '🥟'}</div>`}
             <div class="pcard-body">
               <h3>${p.nombre}</h3>
               <p>${p.descripcion}</p>
               <div class="pcard-footer">
-                <div style="display:flex;align-items:baseline;gap:0.1rem">${precioHtml}</div>
-                <button class="btn-add" data-pid="${p.id}"
+                <div style="display:flex;align-items:baseline;gap:0.1rem;flex-wrap:wrap">
+                  ${precioHtml}
+                  ${!enStock ? '<span class="sin-stock-badge">Sin stock</span>' : ''}
+                </div>
+                <button class="btn-add" data-pid="${p.id}" ${!enStock ? 'disabled' : ''}
                   onclick='addToCart(${JSON.stringify(cartItem)})'>+ Agregar</button>
               </div>
             </div>
