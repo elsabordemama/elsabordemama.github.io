@@ -64,7 +64,8 @@
           "nombre": "Carne",
           "descripcion": "Carne suave con el relleno justo, jugosa y bien sazonada",
           "precio": 2000,
-          "emoji": "🥩"
+          "emoji": "🥩",
+          "imagen": "prod-1.png"
         },
         {
           "id": 2,
@@ -121,7 +122,8 @@
           "nombre": "Roquefort & Nuez",
           "descripcion": "Queso azul cremoso con nueces tostadas, para los atrevidos",
           "precio": 2000,
-          "emoji": "🫙"
+          "emoji": "🫙",
+          "disponible": false
         }
       ]
     }
