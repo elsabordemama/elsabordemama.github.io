@@ -101,21 +101,24 @@
           "nombre": "Calabressa",
           "descripcion": "Chorizo calabrés con cebolla caramelizada, con toque picante",
           "precio": 2000,
-          "emoji": "🌶️"
+          "emoji": "🌶️",
+          "disponible": true
         },
         {
           "id": 6,
           "nombre": "Cheddburger",
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 2000,
-          "emoji": "🍔"
+          "emoji": "🍔",
+          "disponible": true
         },
         {
           "id": 7,
           "nombre": "Fugazzeta",
           "descripcion": "Cebolla, mozzarella generosa y aceitunas verdes",
           "precio": 2000,
-          "emoji": "🧅"
+          "emoji": "🧅",
+          "disponible": true
         },
         {
           "id": 8,
@@ -123,7 +126,7 @@
           "descripcion": "Queso azul cremoso con nueces tostadas, para los atrevidos",
           "precio": 2000,
           "emoji": "🫙",
-          "disponible": false
+          "disponible": true
         }
       ]
     }
