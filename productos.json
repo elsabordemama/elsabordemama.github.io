@@ -65,7 +65,7 @@
           "descripcion": "Carne suave con el relleno justo, jugosa y bien sazonada",
           "precio": 2000,
           "emoji": "🥩",
-          "imagen": "prod-1.png"
+          "imagen": null
         },
         {
           "id": 2,
