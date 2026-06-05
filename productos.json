@@ -86,7 +86,8 @@
           "nombre": "Capresse",
           "descripcion": "Tomate, mozzarella fresca y albahaca",
           "precio": 2000,
-          "emoji": "🍅"
+          "emoji": "🍅",
+          "disponible": false
         }
       ]
     },
