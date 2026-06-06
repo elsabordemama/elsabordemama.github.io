@@ -103,7 +103,7 @@
           "descripcion": "Chorizo calabrés con cebolla caramelizada, con toque picante",
           "precio": 2000,
           "emoji": "🌶️",
-          "disponible": true
+          "disponible": false
         },
         {
           "id": 6,
