@@ -65,7 +65,8 @@
           "descripcion": "Carne suave con el relleno justo, jugosa y bien sazonada",
           "precio": 2000,
           "emoji": "🥩",
-          "imagen": null
+          "imagen": null,
+          "disponible": false
         },
         {
           "id": 2,
@@ -111,7 +112,7 @@
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 2000,
           "emoji": "🍔",
-          "disponible": true
+          "disponible": false
         },
         {
           "id": 7,
