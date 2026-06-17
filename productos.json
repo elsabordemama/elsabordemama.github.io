@@ -2,7 +2,7 @@
   "negocio": {
     "nombre": "El Sabor de Mamá",
     "whatsapp": "5492244475575",
-    "direccion": "Av. Domingo Faustino Sarmiento 545, Las Flores",
+    "direccion": "9 de julio 622 depto 1, Las Flores",
     "telefono": "02244 47-5575",
     "instagram": "empanadas_elsabordemama",
     "analytics_id": ""
@@ -66,7 +66,7 @@
           "precio": 2000,
           "emoji": "🥩",
           "imagen": null,
-          "disponible": false
+          "disponible": true
         },
         {
           "id": 2,
@@ -112,7 +112,7 @@
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 2000,
           "emoji": "🍔",
-          "disponible": false
+          "disponible": true
         },
         {
           "id": 7,
