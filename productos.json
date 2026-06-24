@@ -112,7 +112,7 @@
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 2000,
           "emoji": "🍔",
-          "disponible": false
+          "disponible": true
         },
         {
           "id": 7,
