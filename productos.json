@@ -80,7 +80,8 @@
           "nombre": "Humita",
           "descripcion": "Choclo cremoso y aromático, sabor campo",
           "precio": 2000,
-          "emoji": "🌽"
+          "emoji": "🌽",
+          "disponible": false
         },
         {
           "id": 4,
@@ -104,7 +105,7 @@
           "descripcion": "Chorizo calabrés con cebolla caramelizada, con toque picante",
           "precio": 2000,
           "emoji": "🌶️",
-          "disponible": true
+          "disponible": false
         },
         {
           "id": 6,
@@ -112,7 +113,7 @@
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 2000,
           "emoji": "🍔",
-          "disponible": true
+          "disponible": false
         },
         {
           "id": 7,
