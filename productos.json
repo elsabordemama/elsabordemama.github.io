@@ -105,7 +105,7 @@
           "descripcion": "Chorizo calabrés con cebolla caramelizada, con toque picante",
           "precio": 2000,
           "emoji": "🌶️",
-          "disponible": false
+          "disponible": true
         },
         {
           "id": 6,
@@ -129,7 +129,7 @@
           "descripcion": "Queso azul cremoso con nueces tostadas, para los atrevidos",
           "precio": 2000,
           "emoji": "🫙",
-          "disponible": false
+          "disponible": true
         }
       ]
     }
