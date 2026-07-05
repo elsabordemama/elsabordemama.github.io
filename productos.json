@@ -89,7 +89,7 @@
           "descripcion": "Tomate, mozzarella fresca y albahaca",
           "precio": 2000,
           "emoji": "🍅",
-          "disponible": true
+          "disponible": false
         }
       ]
     },
@@ -129,7 +129,7 @@
           "descripcion": "Queso azul cremoso con nueces tostadas, para los atrevidos",
           "precio": 2000,
           "emoji": "🫙",
-          "disponible": true
+          "disponible": false
         }
       ]
     }
