@@ -19,7 +19,12 @@
     "precio_docena_oferta": 10000
   },
   "horarios": {
-    "lunes": [],
+    "lunes": [
+      {
+        "abre": "19:00",
+        "cierra": "00:00"
+      }
+    ],
     "martes": [],
     "miércoles": [
       {
