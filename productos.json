@@ -9,7 +9,7 @@
   },
   "precios": {
     "empanada_unit": 2000,
-    "docena": 18000,
+    "docena": 19000,
     "docena_cantidad": 12
   },
   "oferta": {
@@ -19,12 +19,7 @@
     "precio_docena_oferta": 10000
   },
   "horarios": {
-    "lunes": [
-      {
-        "abre": "19:00",
-        "cierra": "00:00"
-      }
-    ],
+    "lunes": [],
     "martes": [],
     "miércoles": [
       {
@@ -118,7 +113,7 @@
           "descripcion": "Carne molida, cheddar derretido y cebolla dorada",
           "precio": 2000,
           "emoji": "🍔",
-          "disponible": false
+          "disponible": true
         },
         {
           "id": 7,
